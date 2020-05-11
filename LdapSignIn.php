@@ -72,9 +72,11 @@ class LdapSignIn extends WireData implements Module, ConfigurableModule
             return;
 
         // Set default user domain name if not given
-        $username = str_replace('@', '', $username) == $username ? "$username@{$this->defaultLoginDomain}" : $username;
+        //$username = str_replace('@', '', $username) == $username ? "$username@{$this->defaultLoginDomain}" : $username;
+        
+        $userdn = "".ldap_escape($username)."";
 
-        if ($this->ldapUserLogin($username, $password)) {
+        if ($this->ldapUserLogin($userdn, $password)) {
             $wireUserName = $this->sanitizer->pageName($username);
 
             $user = $this->users->get("name=$wireUserName");
@@ -134,6 +136,8 @@ class LdapSignIn extends WireData implements Module, ConfigurableModule
         if (!$connection)
             return false;
 
+        ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+        
         $bind = @ldap_bind($connection, $user, $password);
 
         return ($bind !== false);
