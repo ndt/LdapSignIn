@@ -74,7 +74,7 @@ class LdapSignIn extends WireData implements Module, ConfigurableModule
         // Set default user domain name if not given
         //$username = str_replace('@', '', $username) == $username ? "$username@{$this->defaultLoginDomain}" : $username;
         
-        $userdn = "".ldap_escape($username)."";
+        $userdn = "".ldap_escape($username, "", LDAP_ESCAPE_DN)."";
 
         if ($this->ldapUserLogin($userdn, $password)) {
             $wireUserName = $this->sanitizer->pageName($username);
